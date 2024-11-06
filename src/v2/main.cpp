@@ -38,7 +38,7 @@ int main() {
     ));
     
 
-    std::ofstream of{"../out.ppm"};
+    std::ofstream of{"../render/out.ppm"};
     krt::Camera camera{};
     camera.imgWidth = 540;
     camera.lensCenter = krt::Point{0, 1, 10};

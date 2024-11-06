@@ -123,3 +123,7 @@ first try the smaller t and see if it's within tInterval (boundaries not include
     - camera sends each ray at a random time within the frame duration (can simplify to [0, 1])
     - implementations of hittable should use ray time to get its realtime location
     - material scattered light should inherit the inRay time
+
+
+## Miscellaneous
+- install brew (mainland China): /bin/zsh -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)"

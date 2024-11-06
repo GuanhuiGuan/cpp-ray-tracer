@@ -1,1 +1,0 @@
-/usr/bin/g++  -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.0.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/rt_v2.dir/src/v2/main.cpp.o -o rt_v2

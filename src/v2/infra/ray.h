@@ -10,10 +10,11 @@ class Ray {
 public:
     Point origin;
     Vec3 dir;
+    double time;
 
     Ray() {}
 
-    Ray(const Point& o, const Vec3& d) : origin(o), dir(d) {}
+    Ray(const Point& o, const Vec3& d, const double _time) : origin(o), dir(d), time{_time} {}
 
     Point at(double t) const {
         return origin + dir * t;

@@ -12,6 +12,9 @@ personal experiment project
 - lerp: linear interpolation, blend = (1-a)*start + a*end
 - vector dot product: a • b = |a|*|b|*cos(t), graphically |a| * (the projection of b on a)
 - vector cross product: a X b = |a|*|b|*sin(t)*n, n follows the right hand rule (a=index finger, b=middle finger, n=thumb)
+    - cross product of itself yields 0, b/c sin(0) == 0
+    - to resolve equation with cross products on both sides, dot product another vector on both sides
+    - a X b = -b X a
 - radians & degrees: rad = deg * pi / 180 (arc length of unit circle)
 ### V1
 #### Render Output
@@ -125,8 +128,7 @@ first try the smaller t and see if it's within tInterval (boundaries not include
 - material scattered light should inherit the inRay time
 #### Bounding Volume Hierarchies
 - divide and conquer to speed up the hit detection
-- Hittable: add a common member bBox (boundingBox)
-    - implemented as AABB (axis-aligned bounding box)
+- Hittable: add a common member AABB bBox (boundingBox)
 - BVH node (derived from Hittable)
     - [constructor] split a list of hittables into left and right child nodes, and create bBox
         - 1 hittable: left and right both points to it
@@ -135,11 +137,12 @@ first try the smaller t and see if it's within tInterval (boundaries not include
         - assign its bBox with an AABB to encompass the AABBs of left and right
     - [hit] (ray, tInterval, hitRecord) check if bBox hit, and then left and right hit check
         - if left hit, tInterval.max for right check should be adjusted to hitRecord.t
-- AABB
+- AABB (axis-aligned bounding box)
     - [member] 3 intervals along 3 axes; at construction, pad intervals to avoid narrow sides (say delta=0.0001)
     - [hit] calc tIntervals along 3 axes, return true if all 3 intervals overlap
-        - for axis x, t = (rayOrigin.x - xt) / rayDir.x, will plug in each end of axis interval at xt
+        - for axis x, t = (xt - rayOrigin.x) / rayDir.x, will plug in each end of axis interval at xt
     - moving objects: simplify by binding the start and end bounding boxes
+- simple benchmarking with scene balls: 93322ms vs 120552ms ???
 #### Texture Mapping
 - basic idea is from a point of a geometry, trace back to find the color on the texture map
 - so texture needs to know the coordinate, texture.value(u, v, point)
@@ -183,8 +186,62 @@ first try the smaller t and see if it's within tInterval (boundaries not include
     - noise texture
         - [Color (*value)(double u, double v, Point point)]
             - gray color * (1 + sine(scale * point.z + 10 * perlinNoise.turbulence(point, 7)))
-
-
+#### 2D Primitive
+- Quad
+    - defined by a point Q and two non-parallel vectors u, v
+    - [rayPlaneIntersection] A*x + B*y + C*z = D -> n • p = D
+        - n is the normal vector of the plane, n = cross(u, v)
+        - we can use Q to get D -> D = n • Q
+        - p is a point on ray -> p = O + t*d -> n • (O + t*d) = D -> t = (D - n • O) / (n • d)
+            - if n • d is very close 0, take it as a miss
+            - if t is outside of tInterval, miss
+    - [isInterior] point on plane p = Q + alpha*u + beta*v, u & v might not be orthogonal
+        - p - Q = QP (vec Q to p) = alpha*u + beta*v
+        - cross product u and v: cross(u, QP) = beta*cross(u, v), cross(v, QP) = alpha*cross(v, u)
+        - dot product n to eliminate cross products
+            - n • cross(u, QP) = beta * n • cross(u, v) = beta * n • n
+            - n • cross(v, QP) = alpha * n • cross(v, u) = -alpha * n • cross(u, v) = -alpha * n • n
+        - beta = (n • cross(u, QP)) / n • n, alpha = -(n • cross(v, QP)) / n • n
+        - let w = n / n • n, alpha = w • cross(QP, v), beta = w • cross(u, QP)
+        - for quad, alpha and beta within [0, 1]
+        - we can expand this method to support other 2D primitives
+#### Light
+- [Color(*emit)(u, v, Point)] for all materials
+- camera rayColor: emit if hit but not scattered; add scattered and emitted as output
+- albedo of light should be greater than 1 light other objects
+#### Instance
+change of coordinates: change the ray from world space to obj space, check ray hit, change the intersection (if any) back to world space
+- Translation
+    - [member] a ptr to a hittable, a Point offset
+    - [constructor] bbox = hittable's bbox + offset
+    - [hit] offsetRay = ray - offset, check hit; if hit, add offset to hitPoint
+- Rotation
+    - [_Rotation on Axes_](https://math.sci.ccny.cuny.edu/document/Rotation+of+Axes)
+        - for rotation about y: newX = cos(theta) * x + sin(theta) * z, newZ = -sin(theta) * x + cos(theta) * z
+        - rotation of a ray: both origin and direction need to be rotated
+    - [member] a ptr to a hittable, a angle to rotate on an axis
+    - [constructor]
+        - get the bbox of the hittable
+        - iterate through all 8 vertices of bbox, rotate each vertex backwards, and keep a record of two points minP and maxP (max x, y, z)
+        - set bbox with minP and maxP
+    - [hit] rotate the ray backwards, check hit; if hit, rotate the hitPoint and normal
+- Scaling (TODO)
+#### Volume
+the ray scatters based on probability = C * deltaLengthTravelled
+for simplicity, assume that the ray won't re-enter the volume once left (?)
+- [hittable] constant density medium
+    - [constructor]
+        - a hittable as boundary, density, albedo/texture
+        - set material = isotropic
+    - [hit]
+        - try hit twice with (-inf, inf) and (tHit1, inf)
+        - clamp (tHi1, tHit2) with (tMin, tMax) and [0, inf]
+        - distanceInBoundary = rayLen * (tHit2 - tHit1)
+        - [why?] hitDistance = negativeInverseDensity * log(randomDouble())
+        - hit if hitDistance <= distanceInBoundary, t = tHit1 + hitDistance / rayLen
+        - set normal = (1,0,0) and frontFacing = true (arbitary, ?)
+- [material] isotropic
+    - always scatter, but the direction is random
 ## Miscellaneous
 - install brew (mainland China): ```/bin/zsh -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)"```
 

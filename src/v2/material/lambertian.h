@@ -13,8 +13,7 @@ public:
 
     bool scatter(const Ray& ray, HitRecord& record, Ray& outRay, Color& attenuation) const override {
         Vec3 outDir = record.normal + Vec3::genRandomUnitVec();
-        outRay.origin = record.hitPoint;
-        outRay.dir = outDir;
+        outRay = Ray(record.hitPoint, outDir, ray.time);
         attenuation = albedo;
         return true;
     }

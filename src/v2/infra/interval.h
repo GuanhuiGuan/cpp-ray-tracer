@@ -11,10 +11,15 @@ public:
     double min;
     double max;
 
-    Interval(double dMin = infinity, double dMax = -infinity)
-    : min {dMin}
-    , max {dMax}
-    {}
+    Interval(double dMin = infinity, double dMax = -infinity) {
+        min = dMin > dMax ? dMax : dMin;
+        max = dMin > dMax ? dMin : dMax;
+    }
+
+    Interval(const Interval& i1, const Interval& i2) {
+        min = i1.min > i2.min ? i2.min : i1.min;
+        max = i1.max > i2.max ? i1.max : i2.max;
+    }
 
     // // move constructor
     // Interval(Interval&& i)
@@ -24,6 +29,8 @@ public:
 
     inline double size() const {return max - min;}
 
+    inline bool valid() const {return min <= max;}
+
     inline bool contains(double x) const {return min <= x && x <= max;}
 
     inline bool surrounds(double x) const {return min < x && x < max;}
@@ -32,6 +39,24 @@ public:
         if (x < min) return min;
         if (x > max) return max;
         return x;
+    }
+
+    inline void expand(double delta) {
+        double padding = delta / 2;
+        min -= padding;
+        max += padding;
+    }
+
+    inline Interval intersect(const Interval& i) const {
+        return Interval(std::max(min, i.min), std::min(max, i.max));
+    }
+
+    inline Interval merge(const Interval& i) const {
+        return Interval(std::min(min, i.min), std::max(max, i.max));
+    }
+
+    inline Interval operator+=(double v) const {
+        return Interval{min + v, max + v};
     }
 
     static const Interval empty;

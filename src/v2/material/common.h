@@ -18,8 +18,18 @@ public:
         return false;
     }
 
-    virtual Color emit() const {return Color{};}
+    virtual Color emit(const double& u, const double& v, const Point& point) const {return Color{};}
+
+    virtual std::ostream& log(std::ostream& os) const {
+        os << "{albedo=" << albedo
+            << "}";
+        return os;
+    }
 };
+
+std::ostream& operator<<(std::ostream& os, const BaseMat& mat) {
+    return mat.log(os);
+}
 
 }
 

@@ -19,6 +19,8 @@ public:
     Point viewportCenter{};
     double vFov{90}; // in degrees
     double apertureAngle{10};
+    double shutterOpenAt{0};
+    double shutterSpeed{1}; // in seconds
 
     bool renderNormal {false};
     bool parallel {false};
@@ -150,8 +152,8 @@ Color Camera::rayColor(const Ray& ray, const Hittable& world, const int depth) c
 
         if (renderNormal) return normalize(hitRecord.normal);
         
-        // light
-        Color emitted = hitRecord.material->emit();
+        // emitted light
+        Color emitted = hitRecord.material->emit(hitRecord.u, hitRecord.v, hitRecord.hitPoint);
 
         Ray outRay;
         Color attenuation;
@@ -178,6 +180,7 @@ Ray Camera::genRay(const int r, const int c) const {
     return Ray {
         origin,
         pixelCenter - origin,
+        randomDouble(shutterOpenAt, shutterOpenAt + shutterSpeed),
     };
 }
 

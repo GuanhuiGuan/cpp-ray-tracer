@@ -17,6 +17,7 @@ public:
     bool scatter(const Ray& ray, HitRecord& record, Ray& outRay, Color& attenuation) const override {
         outRay.origin = record.hitPoint;
         outRay.dir = reflect(ray.dir, record.normal).unitVec() + fuzzy * Vec3::genRandomUnitVec();
+        outRay.time = ray.time;
         attenuation = albedo;
         return dot(outRay.dir, record.normal) > 0;
     }

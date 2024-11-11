@@ -6,11 +6,11 @@
 
 namespace krt {
 
-class Light : public BaseMat {
+class DiffuseLight : public BaseMat {
 
 public:
 
-    Light (const Color& a) {
+    DiffuseLight (const Color& a) {
         albedo = a;
     }
 
@@ -19,7 +19,7 @@ public:
         return true;
     }
 
-    Color emit() const override {return albedo;}
+    Color emit(const double& u, const double& v, const Point& point) const override {return albedo;}
 };
 
 }

@@ -17,6 +17,7 @@ public:
     bool scatter(const Ray& ray, HitRecord& record, Ray& outRay, Color& attenuation) const override {
         attenuation = albedo;
         outRay.origin = record.hitPoint;
+        outRay.time = ray.time;
         double ri = record.frontFacing ? 1 / relRefractionIdx : relRefractionIdx; // etaOut / etaIn
         Vec3 unitInDir = ray.dir.unitVec();
         double cosIn = std::min(dot(-unitInDir, record.normal), 1.0); // avoid sqrt error

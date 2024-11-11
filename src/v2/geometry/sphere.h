@@ -10,11 +10,28 @@ public:
     Point center;
     double radius;
     std::shared_ptr<BaseMat> mat;
+    // returns where is the sphere center at the given time
+    Point (*originAtTime)(const Sphere& sphere, const double& time) {[](const Sphere& sphere, const double& time) {return sphere.center;}};
 
-    Sphere(const Point& p, const double& r, const std::shared_ptr<BaseMat> m) : center {p}, radius {r}, mat {m} {}
+    Vec3 radiusVec;
+
+    Sphere(const Point& p, const double& r, const std::shared_ptr<BaseMat> m) 
+    : center {p}, radius {r}, mat {m} {
+        init();
+    }
+
+    Sphere(const Point& p, const double& r, const std::shared_ptr<BaseMat> m, 
+        Point (*_originAtTime)(const Sphere& sphere, const double& time), double startTime, double endTime) 
+    : center {p}, radius {r}, mat {m}, originAtTime{_originAtTime} {
+        init(startTime, endTime);
+    }
 
     bool hit(const Ray& ray, Interval tInterval, HitRecord& record) const override {
-        Vec3 oc = center - ray.origin;
+#ifdef ENABLE_BVH
+        if (!bBox.hit(ray, tInterval)) return false;
+#endif
+        Point centerNow = originAtTime(*this, ray.time);
+        Vec3 oc = centerNow - ray.origin;
         double a = ray.dir.lengthSquared();
         double h = dot(ray.dir, oc);
         double c = oc.lengthSquared() - radius * radius;
@@ -31,10 +48,48 @@ public:
 
         record.hitPoint = ray.at(t);
         record.t = t;
-        Vec3 outwardNormal = (record.hitPoint - center) / radius;
+        Vec3 outwardNormal = (record.hitPoint - centerNow) / radius;
         record.setFaceNormal(ray, outwardNormal);
         record.material = mat;
         return true;
+    }
+
+    const Aabb& boundingBox() const override {
+        return bBox;
+    }
+
+    std::ostream& log(std::ostream& os) const override {
+        os << "{center=" << center
+            << ", radius=" << radius
+            << ", material=" << *(mat)
+            << "}";
+        return os;
+    }
+private:
+    Aabb bBox;
+
+    void init(double startTime = 0, double endTime = 0) {
+        radiusVec = radius * Vec3{1, 1, 1};
+        bBox = getBBox(startTime, endTime);
+    }
+
+    // bBox should cover the entire motion, so theoretically we should calculate the integral (?)
+    // to simplify, I'll collect boxes at start and end, sample between them, and then merge the boxes
+    const Aabb getBBox(double startTime, double endTime) const {
+        // make sure start and end positions are covered
+        Aabb box {getBBox(startTime)};
+        box = Aabb(box, getBBox(endTime));
+        double delta = (endTime - startTime) / 10; // num of sample
+        delta = std::max(0.1, delta); // limit the min value of delta
+        for (double t = startTime + delta; t < endTime; t += delta) {
+            box = Aabb(box, getBBox(t));
+        }
+        return box;
+    }
+
+    const Aabb getBBox(double time) const {
+        Point centerNow = originAtTime(*this, time);
+        return Aabb(centerNow - radiusVec, centerNow + radiusVec);
     }
 };
 

@@ -88,6 +88,14 @@ public:
     }
 };
 
+std::ostream& operator<<(std::ostream& os, const Vec3& v) {
+    os << "(" << v[0]
+        << "," << v[1]
+        << "," << v[2]
+        << ")";
+    return os;
+}
+
 inline Vec3 operator+(const Vec3& v1, const Vec3& v2) {
     return Vec3{v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]};
 }

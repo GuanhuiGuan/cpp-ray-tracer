@@ -1,4 +1,5 @@
 .vscode
 build
 render
+.DS_Store
 ./*/.DS_Store

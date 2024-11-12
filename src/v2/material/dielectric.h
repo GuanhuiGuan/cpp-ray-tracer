@@ -12,10 +12,12 @@ class Dielectric : public BaseMat {
 
 public:
 
-    Dielectric (const Color& a, const double ri) : relRefractionIdx {ri} {albedo = a;}
+    Dielectric(const Color& albedo, const double ri) : Dielectric(std::make_shared<TexSolidColor>(albedo), ri) {}
+
+    Dielectric(const std::shared_ptr<Texture>& t, const double ri) : relRefractionIdx {ri} {tex = t;}
 
     bool scatter(const Ray& ray, HitRecord& record, Ray& outRay, Color& attenuation) const override {
-        attenuation = albedo;
+        attenuation = tex->color(record.u, record.v, record.hitPoint);
         outRay.origin = record.hitPoint;
         outRay.time = ray.time;
         double ri = record.frontFacing ? 1 / relRefractionIdx : relRefractionIdx; // etaOut / etaIn

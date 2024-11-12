@@ -126,7 +126,7 @@ void krt::Camera::render(const ImgType type, std::ostream& os, const Hittable& w
         }
     } else {
         for (int r {0}; r < imgHeight; r++) {
-            std::clog << "\rrendering line " << r << "/" << imgHeight << ", elapsed time " << getDurationInMs(startTime) << std::flush;
+            std::clog << "\rline " << r << "/" << imgHeight << " elapsed " << getDurationInMs(startTime) << ' ' << std::flush;
             for (int c {0}; c < imgWidth; c++) {
                 Color color{};
                 for (int s {0}; s < samplePerPixel; s++) {

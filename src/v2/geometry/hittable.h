@@ -28,19 +28,6 @@ public:
     }
 };
 
-std::ostream& operator<<(std::ostream& os, const HitRecord& hitRecord) {
-    os << "{hitPoint=" << hitRecord.hitPoint
-        << ", t=" << hitRecord.t
-        << ", normal=" << hitRecord.normal
-        << ", frontFacing=" << hitRecord.frontFacing
-        << ", u=" << hitRecord.u
-        << ", v=" << hitRecord.v
-    ;
-    hitRecord.material ? (os << ", material=nullptr") : (os << ", material=" << *(hitRecord.material));
-    os << "}";
-    return os;
-}
-
 class Hittable {
 public:
     virtual ~Hittable() = default;

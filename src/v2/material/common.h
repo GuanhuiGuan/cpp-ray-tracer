@@ -2,6 +2,7 @@
 #define MAT_COMMON_H
 
 #include "../infra/export.h"
+#include "../texture/texture.h"
 
 namespace krt {
 
@@ -9,8 +10,7 @@ class HitRecord; // forward declaration to avoid circular ref
 
 class BaseMat {
 public:
-
-    Color albedo;
+    std::shared_ptr<Texture> tex;
 
     virtual ~BaseMat() = default;
 
@@ -19,17 +19,7 @@ public:
     }
 
     virtual Color emit(const double& u, const double& v, const Point& point) const {return Color{};}
-
-    virtual std::ostream& log(std::ostream& os) const {
-        os << "{albedo=" << albedo
-            << "}";
-        return os;
-    }
 };
-
-std::ostream& operator<<(std::ostream& os, const BaseMat& mat) {
-    return mat.log(os);
-}
 
 }
 

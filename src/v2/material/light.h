@@ -10,16 +10,19 @@ class DiffuseLight : public BaseMat {
 
 public:
 
-    DiffuseLight (const Color& a) {
-        albedo = a;
+    DiffuseLight(const Color& albedo) : DiffuseLight(std::make_shared<TexSolidColor>(albedo)) {}
+
+    DiffuseLight(const std::shared_ptr<Texture>& t) {
+        tex = t;
     }
 
     bool scatter(const Ray& ray, HitRecord& record, Ray& outRay, Color& attenuation) const override {
-        attenuation = albedo;
-        return true;
+        return false;
     }
 
-    Color emit(const double& u, const double& v, const Point& point) const override {return albedo;}
+    Color emit(const double& u, const double& v, const Point& point) const override {
+        return tex->color(u, v, point);
+    }
 };
 
 }

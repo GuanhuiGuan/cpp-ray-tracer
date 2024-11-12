@@ -88,10 +88,10 @@ void sceneBalls() {
 
     std::ofstream of{"../render/out.ppm"};
     krt::Camera camera{};
-    camera.imgWidth = 1080;
+    camera.imgWidth = 540;
     camera.lensCenter = krt::Point{-5, 4, 10};
     camera.viewportCenter = krt::Point{0, 0, 1};
-    camera.samplePerPixel = 50;
+    camera.samplePerPixel = 10;
     camera.vFov = 40;
     camera.apertureAngle = 0.5;
     camera.shutterOpenAt = shutterOpenAt;

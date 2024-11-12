@@ -12,9 +12,9 @@ class Metal : public BaseMat {
 
 public:
 
-    Metal (const Color& albedo, const double f) : Metal(std::make_shared<TexSolidColor>(albedo), f) {}
+    Metal (const Color& albedo, const double f = 0) : Metal(std::make_shared<TexSolidColor>(albedo), f) {}
 
-    Metal (const std::shared_ptr<Texture>& t, const double f) : fuzzy {f} {tex = t;}
+    Metal (const std::shared_ptr<Texture>& t, const double f = 0) : fuzzy {f} {tex = t;}
 
     bool scatter(const Ray& ray, HitRecord& record, Ray& outRay, Color& attenuation) const override {
         outRay.origin = record.hitPoint;

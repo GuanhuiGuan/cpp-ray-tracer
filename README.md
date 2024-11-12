@@ -152,7 +152,7 @@ first try the smaller t and see if it's within tInterval (boundaries not include
 - Solid Color Texture
     - irrelevant to the coordinate, always return albedo
 - Spatial Checkered Texture
-    - sum of all dimensions (floor(inverseScale * dimensionComponent)) % 2 -> odd or even texture
+    - sumOf3Dimensions( (floor(inverseScale * dimensionComponent)) ) % 2 -> odd or even texture
 - Image Texture
     - texture coordinates for sphere
         - u, v: range [0, 1] from bottom left corner of an img, mapped from phi (angle from -X counter clockwise) and theta (angle up from -Y)

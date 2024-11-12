@@ -15,6 +15,8 @@
 
 #define ENABLE_BVH
 
+namespace krt {
+
 void sceneBalls() {
 
     double shutterOpenAt {0.0};
@@ -101,6 +103,8 @@ void sceneBalls() {
     // camera.parallel = true;
     camera.refreshCfg();
     camera.render(krt::ImgType::ppm, of, world);
+}
+
 }
 
 #endif

@@ -14,6 +14,7 @@ public:
     BvhNode(std::vector<std::shared_ptr<Hittable>> vec, size_t iStart, size_t iEnd) {
         // build bBox
         bBox = Aabb::empty;
+        if (iEnd == iStart) return;
         for (size_t i = iStart; i < iEnd; ++i) {
             bBox = Aabb(bBox, vec[i]->boundingBox());
         }
@@ -46,8 +47,8 @@ public:
 
     bool hit(const Ray& ray, Interval tInterval, HitRecord& record) const override {
         if (!bBox.hit(ray, tInterval)) return false;
-        bool hitLeft {left->hit(ray, tInterval, record)};
-        bool hitRight {right->hit(ray, Interval{tInterval.min, hitLeft ? record.t : tInterval.max}, record)};
+        bool hitLeft {left && left->hit(ray, tInterval, record)};
+        bool hitRight {right && right->hit(ray, Interval{tInterval.min, hitLeft ? record.t : tInterval.max}, record)};
         return hitLeft || hitRight;
     }
 

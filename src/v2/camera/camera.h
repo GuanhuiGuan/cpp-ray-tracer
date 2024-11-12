@@ -18,7 +18,7 @@ public:
     Point lensCenter{};
     Point viewportCenter{};
     double vFov{90}; // in degrees
-    double apertureAngle{10};
+    double apertureAngle{1};
     double shutterOpenAt{0};
     double shutterSpeed{1}; // in seconds
 

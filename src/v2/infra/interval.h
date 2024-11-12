@@ -65,9 +65,17 @@ public:
 
 };
 
-const Interval Interval::empty = Interval{infinity, -infinity};
+const Interval Interval::empty = Interval{0, 0};
 
 const Interval Interval::universe = Interval{-infinity, infinity};
+
+inline Interval operator+(const Interval& i, double v) {
+    return Interval {i.min + v, i.max + v};
+}
+
+inline Interval operator+(double v, const Interval& i) {
+    return i + v;
+}
 
 }
 

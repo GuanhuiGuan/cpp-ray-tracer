@@ -27,9 +27,6 @@ public:
     }
 
     bool hit(const Ray& ray, Interval tInterval, HitRecord& record) const override {
-#ifdef ENABLE_BVH
-        if (!bBox.hit(ray, tInterval)) return false;
-#endif
         Point centerNow = originAtTime(*this, ray.time);
         Vec3 oc = centerNow - ray.origin;
         double a = ray.dir.lengthSquared();
@@ -58,13 +55,6 @@ public:
         return bBox;
     }
 
-    std::ostream& log(std::ostream& os) const override {
-        os << "{center=" << center
-            << ", radius=" << radius
-            << ", material=" << *(mat)
-            << "}";
-        return os;
-    }
 private:
     Aabb bBox;
 
@@ -73,23 +63,21 @@ private:
         bBox = getBBox(startTime, endTime);
     }
 
-    // bBox should cover the entire motion, so theoretically we should calculate the integral (?)
-    // to simplify, I'll collect boxes at start and end, sample between them, and then merge the boxes
-    const Aabb getBBox(double startTime, double endTime) const {
-        // make sure start and end positions are covered
+    // need to capture the entire motion
+    // sample for simplicity
+    Aabb getBBox(double startTime, double endTime) {
         Aabb box {getBBox(startTime)};
-        box = Aabb(box, getBBox(endTime));
-        double delta = (endTime - startTime) / 10; // num of sample
-        delta = std::max(0.1, delta); // limit the min value of delta
+        box = Aabb{box, getBBox(endTime)};
+        double delta {std::max((endTime - startTime) / 3, 1e-4)};
         for (double t = startTime + delta; t < endTime; t += delta) {
             box = Aabb(box, getBBox(t));
         }
         return box;
     }
 
-    const Aabb getBBox(double time) const {
-        Point centerNow = originAtTime(*this, time);
-        return Aabb(centerNow - radiusVec, centerNow + radiusVec);
+    Aabb getBBox(double time) const {
+        Point cNow {originAtTime(*this, time)};
+        return Aabb {cNow - radiusVec, cNow + radiusVec};
     }
 };
 

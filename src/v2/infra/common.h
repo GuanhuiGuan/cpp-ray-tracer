@@ -10,6 +10,13 @@
 
 namespace krt {
 
+typedef std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds> timePoint;
+
+inline long long getDurationInMs(const timePoint& startTime) {
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startTime);
+    return duration.count();
+}
+
 constexpr double pi = 3.1415926535897932385;
 
 constexpr double infinity = std::numeric_limits<double>::infinity();
@@ -24,7 +31,7 @@ constexpr double rad2Deg(const double radiant) {
 
 inline double randomDouble() {
     static std::uniform_real_distribution<double> uniDist(0.0, 0.9999999999);
-    static std::mt19937_64 generator;
+    static std::mt19937_64 generator(std::random_device{}());
     return uniDist(generator);
 }
 

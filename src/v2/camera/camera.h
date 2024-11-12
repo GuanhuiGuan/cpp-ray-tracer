@@ -22,6 +22,8 @@ public:
     double shutterOpenAt{0};
     double shutterSpeed{1}; // in seconds
 
+    Color background{};
+
     bool renderNormal {false};
     bool parallel {false};
 
@@ -124,7 +126,7 @@ void krt::Camera::render(const ImgType type, std::ostream& os, const Hittable& w
         }
     } else {
         for (int r {0}; r < imgHeight; r++) {
-            std::clog << "rendering line " << r << "/" << imgHeight << '\n';
+            std::clog << "\rrendering line " << r << "/" << imgHeight << ", elapsed time " << getDurationInMs(startTime) << std::flush;
             for (int c {0}; c < imgWidth; c++) {
                 Color color{};
                 for (int s {0}; s < samplePerPixel; s++) {
@@ -138,35 +140,33 @@ void krt::Camera::render(const ImgType type, std::ostream& os, const Hittable& w
             }
         }
     }
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startTime);
-    std::clog << "render complete in " << duration.count() << "ms\n";
+    // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startTime);
+    std::clog << "\rrender completed in " << getDurationInMs(startTime) << "ms\n";
 }
 
 Color Camera::rayColor(const Ray& ray, const Hittable& world, const int depth) const
 {
     if (depth < 0) return Color{0, 0, 0};
     // avoid shadow acne
-    Interval tInterval {1e-10, infinity};
+    Interval tInterval {1e-3, infinity};
     HitRecord hitRecord;
-    if (world.hit(ray, tInterval, hitRecord)) {
+    if (!world.hit(ray, tInterval, hitRecord)) {
+        // return background(ray);
+        return background;
+    }
 
-        if (renderNormal) return normalize(hitRecord.normal);
-        
-        // emitted light
-        Color emitted = hitRecord.material->emit(hitRecord.u, hitRecord.v, hitRecord.hitPoint);
+    if (renderNormal) return normalize(hitRecord.normal);
 
-        Ray outRay;
-        Color attenuation;
-        bool scattered = hitRecord.material->scatter(ray, hitRecord, outRay, attenuation);
-        if (scattered) {
-            return attenuation * rayColor(outRay, world, depth - 1) + emitted;
-        }
+    // emitted light
+    Color emitted = hitRecord.material->emit(hitRecord.u, hitRecord.v, hitRecord.hitPoint);
+
+    Ray outRay;
+    Color attenuation;
+    if (!hitRecord.material->scatter(ray, hitRecord, outRay, attenuation)) {
         // hit but not scattered
         return emitted;
     }
-
-    return Color{};
-    // return background(ray);
+    return attenuation * rayColor(outRay, world, depth - 1) + emitted;
 }
 
 Ray Camera::genRay(const int r, const int c) const {

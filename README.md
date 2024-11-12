@@ -142,7 +142,9 @@ first try the smaller t and see if it's within tInterval (boundaries not include
     - [hit] calc tIntervals along 3 axes, return true if all 3 intervals overlap
         - for axis x, t = (xt - rayOrigin.x) / rayDir.x, will plug in each end of axis interval at xt
     - moving objects: simplify by binding the start and end bounding boxes
-- simple benchmarking with scene balls: 93322ms vs 120552ms ???
+- other hittables: no need to utilize bBox in hit()
+- simple benchmarking with Scene balls (540 px width, 5 samples per pixel): 249858ms vs 64126ms
+- one mistake made: Interval::empty can't be set with (inf, -inf) b/c Interval constructor will adjust the order
 #### Texture Mapping
 - basic idea is from a point of a geometry, trace back to find the color on the texture map
 - so texture needs to know the coordinate, texture.value(u, v, point)

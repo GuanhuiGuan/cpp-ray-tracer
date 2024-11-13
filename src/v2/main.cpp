@@ -6,7 +6,7 @@
 
 int main() {
 
-    std::string sceneName{"balls"};
+    std::string sceneName{"tex"};
     // std::clog << "Please input the scene name: ";
     // std::cin >> sceneName;
 

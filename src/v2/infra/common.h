@@ -39,6 +39,11 @@ inline double randomDouble(double min, double max) {
     return min + (max - min) * randomDouble();
 }
 
+// returns int in [min, max]
+inline int randomInt(int min, int max) {
+    return randomDouble(min, max + 1);
+}
+
 template <typename T>
 inline T clamp(T x, T min, T max) {
     if (x < min) return min;

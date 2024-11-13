@@ -176,7 +176,7 @@ first try the smaller t and see if it's within tInterval (boundaries not include
     - use turbulence to adjust the phase of a sine
 - final implementation
     - perlin
-        - [randVecArr] static random Vec3 array of size 256
+        - [randVecArr] static random unit Vec3 (-1, 1) array of size 256
         - [permArr] static int array of size 256 for each axis with shuffled indices
         - [double (*noise)(Point p)]
             - split each component of p to integer and decimal
@@ -186,6 +186,7 @@ first try the smaller t and see if it's within tInterval (boundaries not include
             - acc += weight * noise(tempP) for 'depth' iterations
             - weight *= 0.5, starts from 1
             - tempP *= 2, starts from p
+            - return abs(acc)
     - noise texture
         - [Color (*value)(double u, double v, Point point)]
             - gray color * (1 + sine(scale * point.z + 10 * perlinNoise.turbulence(point, 7)))

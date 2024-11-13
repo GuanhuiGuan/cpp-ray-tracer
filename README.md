@@ -157,10 +157,11 @@ first try the smaller t and see if it's within tInterval (boundaries not include
     - texture coordinates for sphere
         - u, v: range [0, 1] from bottom left corner of an img, mapped from phi (angle from -X counter clockwise) and theta (angle up from -Y)
         - u = phi / (2*pi), v = theta / pi; y = -cos(theta), x = sin(theta) * (-cos(phi)), z = sin(theta) * sin(phi)
-        - phi = atan2(z, -x) = atan2(-z, x) + pi, theta = arccos(-y)
+        - phi = atan2(-z, x) + pi, theta = arccos(-y)
     - load image from file
-        - use stbi_loadf to load (include "stb_image.h" from https://github.com/nothings/stb)
-        - main method: pixelData(row, col)
+        - use stbi_loadf to load (include "stb_image.h" from https://github.com/nothings/stb) as float ([0, 1]) array
+        - convert float array to byte array (unsigned char [0, 255])
+        - main method: pixelData(row, col), returns the address of R (in RGB) in the byte array
     - value(u, v, point)
         - in the end, scale to Color with all 3 components in range [0, 1]
 #### Perlin Noise

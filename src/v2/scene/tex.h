@@ -6,6 +6,7 @@
 #include "../geometry/sphere.h"
 #include "../material/lambertian.h"
 #include "../material/metal.h"
+#include "../texture/img.h"
 
 namespace krt {
 
@@ -17,13 +18,12 @@ void sceneTexBalls() {
     HittableList world{};
     world.add(std::make_shared<Sphere>(Point{0, -1001, 0}, 1000, 
         std::make_shared<Metal>(
-            std::make_shared<TexSpatialChecker>(Color{0.969, 0.792, 0.788}, Color{0.702, 0.808, 0.898}, 0.2)
+            std::make_shared<TexSpatialChecker>(Color{0.969, 0.792, 0.788}, Color{0.702, 0.808, 0.898}, 0.5), 0.1
         )
     ));
-    world.add(std::make_shared<Sphere>(Point{0, 0, 0}, 1, 
+    world.add(std::make_shared<Sphere>(Point{0, 0.5, 0}, 1, 
         std::make_shared<Metal>(
-            // std::make_shared<TexSolidColor>(Color{0.969, 0.792, 0.788})
-            std::make_shared<TexSpatialChecker>(Color{0.969, 0.792, 0.788}, Color{0.702, 0.808, 0.898}, 0.2)
+            std::make_shared<TexImg>("../resource/image/earthmap.jpg")
         )
     ));
 

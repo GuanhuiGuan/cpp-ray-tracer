@@ -40,6 +40,13 @@ inline double randomDouble(double min, double max) {
 }
 
 template <typename T>
+inline T clamp(T x, T min, T max) {
+    if (x < min) return min;
+    if (x > max) return max;
+    return x;
+}
+
+template <typename T>
 inline T normalize(const T& data) {return (data + 1) / 2;}
 
 }

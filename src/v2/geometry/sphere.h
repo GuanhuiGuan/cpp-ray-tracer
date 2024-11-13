@@ -2,6 +2,7 @@
 #define GEO_SPHERE_H
 
 #include "hittable.h"
+#include "math.h"
 
 namespace krt {
 
@@ -48,6 +49,9 @@ public:
         Vec3 outwardNormal = (record.hitPoint - centerNow) / radius;
         record.setFaceNormal(ray, outwardNormal);
         record.material = mat;
+
+        getUv(outwardNormal, record.u, record.v);
+
         return true;
     }
 
@@ -78,6 +82,14 @@ private:
     Aabb getBBox(double time) const {
         Point cNow {originAtTime(*this, time)};
         return Aabb {cNow - radiusVec, cNow + radiusVec};
+    }
+
+    // p: use unit outward normal
+    static void getUv(const Point& p, double& u, double& v) {
+        double phi {std::atan2(-p.z(), p.x()) + pi}; // angle starts from -X counter clockwise
+        double theta {std::acos(-p.y())}; // angle starts from -Y to +Z
+        u = phi / (2 * pi);
+        v = theta / pi;
     }
 };
 

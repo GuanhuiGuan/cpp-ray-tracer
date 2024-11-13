@@ -22,7 +22,7 @@ public:
     double shutterOpenAt{0};
     double shutterSpeed{1}; // in seconds
 
-    Color background{};
+    std::shared_ptr<Texture> background {std::make_shared<TexSolidColor>(Color{})};
 
     bool renderNormal {false};
     bool parallel {false};
@@ -152,7 +152,14 @@ Color Camera::rayColor(const Ray& ray, const Hittable& world, const int depth) c
     HitRecord hitRecord;
     if (!world.hit(ray, tInterval, hitRecord)) {
         // return background(ray);
-        return background;
+        /* TODO fix skybox
+        Point p {ray.at(0)};
+        Vec3 fromViewportTopLeft {p - viewportTopLeft};
+        double u = fromViewportTopLeft.x() / viewportWidth;
+        double v = -fromViewportTopLeft.y() / viewportHeight;
+        return background->color(u, v, p);
+        */
+        return background->color(0, 0, Point{});
     }
 
     if (renderNormal) return normalize(hitRecord.normal);

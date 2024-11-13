@@ -98,7 +98,7 @@ void sceneBalls() {
     camera.apertureAngle = 0.5;
     camera.shutterOpenAt = shutterOpenAt;
     camera.shutterSpeed = shutterSpeed;
-    camera.background = krt::Color{0.7, 0.8, 1.0};
+    camera.background = std::make_shared<TexSolidColor>(Color{0.7, 0.8, 1.0});
     // camera.renderNormal = true;
     // camera.parallel = true;
     camera.refreshCfg();

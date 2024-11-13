@@ -59,6 +59,14 @@ public:
         return bBox;
     }
 
+    // p: use unit outward normal
+    static void getUv(const Point& p, double& u, double& v) {
+        double phi {std::atan2(-p.z(), p.x()) + pi}; // angle starts from -X counter clockwise
+        double theta {std::acos(-p.y())}; // angle starts from -Y to +Z
+        u = phi / (2 * pi);
+        v = theta / pi;
+    }
+
 private:
     Aabb bBox;
 
@@ -82,14 +90,6 @@ private:
     Aabb getBBox(double time) const {
         Point cNow {originAtTime(*this, time)};
         return Aabb {cNow - radiusVec, cNow + radiusVec};
-    }
-
-    // p: use unit outward normal
-    static void getUv(const Point& p, double& u, double& v) {
-        double phi {std::atan2(-p.z(), p.x()) + pi}; // angle starts from -X counter clockwise
-        double theta {std::acos(-p.y())}; // angle starts from -Y to +Z
-        u = phi / (2 * pi);
-        v = theta / pi;
     }
 };
 

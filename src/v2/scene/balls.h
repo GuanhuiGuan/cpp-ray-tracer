@@ -68,7 +68,7 @@ void sceneBalls() {
                     ? [](const krt::Sphere& sphere, const double& time) {
                         // double rotateAngle = krt::pi * krt::randomDouble(0.3, 0.6) * time;
                         // return sphere.center + krt::Vec3{std::cos(rotateAngle), 0, std::sin(rotateAngle)};
-                        return sphere.center + krt::Vec3{0, krt::randomDouble(-0.1, 0.4), 0};
+                        return sphere.center + krt::Vec3{krt::randomDouble(-0.5, 0.5) * time, krt::randomDouble(-0.5, 0.5) * time, krt::randomDouble(-0.5, 0.5) * time};
                     }
                     : [](const krt::Sphere& sphere, const double& time) {return sphere.center;},
                 shutterOpenAt, shutterShutAt
@@ -90,10 +90,10 @@ void sceneBalls() {
 
     std::ofstream of{"../render/out.ppm"};
     krt::Camera camera{};
-    camera.imgWidth = 540;
+    camera.imgWidth = 1920;
     camera.lensCenter = krt::Point{-5, 4, 10};
     camera.viewportCenter = krt::Point{0, 0, 1};
-    camera.samplePerPixel = 10;
+    camera.samplePerPixel = 60;
     camera.vFov = 40;
     camera.apertureAngle = 0.5;
     camera.shutterOpenAt = shutterOpenAt;

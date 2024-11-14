@@ -193,16 +193,16 @@ first try the smaller t and see if it's within tInterval (boundaries not include
 #### 2D Primitive
 - Quad
     - defined by a point Q and two non-parallel vectors u, v
-    - [rayPlaneIntersection] A*x + B*y + C*z = D -> n • p = D
-        - n is the normal vector of the plane, n = cross(u, v)
-        - we can use Q to get D -> D = n • Q
-        - p is a point on ray -> p = O + t*d -> n • (O + t*d) = D -> t = (D - n • O) / (n • d)
-            - if n • d is very close 0, take it as a miss
+    - [rayPlaneIntersection] A*x + B*y + C*z = D -> un • p = D
+        - un is unit normal vector of the plane, un = cross(u, v).unitVec()
+        - we can use Q to get D -> D = un • Q
+        - p is a point on ray -> p = O + t*d -> un • (O + t*d) = D -> t = (D - un • O) / (un • d)
+            - if un • d is very close 0, take it as a miss
             - if t is outside of tInterval, miss
     - [isInterior] point on plane p = Q + alpha*u + beta*v, u & v might not be orthogonal
         - p - Q = QP (vec Q to p) = alpha*u + beta*v
         - cross product u and v: cross(u, QP) = beta*cross(u, v), cross(v, QP) = alpha*cross(v, u)
-        - dot product n to eliminate cross products
+        - dot product n (cross(u, v), not unit!) to eliminate cross products
             - n • cross(u, QP) = beta * n • cross(u, v) = beta * n • n
             - n • cross(v, QP) = alpha * n • cross(v, u) = -alpha * n • cross(u, v) = -alpha * n • n
         - beta = (n • cross(u, QP)) / n • n, alpha = -(n • cross(v, QP)) / n • n

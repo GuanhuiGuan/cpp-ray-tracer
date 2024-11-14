@@ -63,11 +63,15 @@ public:
 
     static const Interval universe;
 
+    static const Interval int01;
+
 };
 
 const Interval Interval::empty = Interval{0, 0};
 
 const Interval Interval::universe = Interval{-infinity, infinity};
+
+const Interval Interval::int01 = Interval{0, 1};
 
 inline Interval operator+(const Interval& i, double v) {
     return Interval {i.min + v, i.max + v};

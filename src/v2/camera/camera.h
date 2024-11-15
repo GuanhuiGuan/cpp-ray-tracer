@@ -17,12 +17,13 @@ public:
 
     Point lensCenter{};
     Point viewportCenter{};
+    Vec3 vUp {0.0, 1.0, 0.0}; // always pointing up, as a reference and helper
     double vFov{90}; // in degrees
     double apertureAngle{1};
     double shutterOpenAt{0};
     double shutterSpeed{1}; // in seconds
 
-    std::shared_ptr<Texture> background {std::make_shared<TexSolidColor>(Color{})};
+    std::shared_ptr<Texture> background {std::make_shared<TexSolidColor>(Color{0, 0, 0})};
 
     bool renderNormal {false};
     bool parallel {false};
@@ -37,8 +38,7 @@ public:
 private:
     int imgHeight;
     double sampleScaleFactor;
-    
-    Vec3 vUp {0.0, 1.0, 0.0}; // always pointing up, as a reference and helper
+
     Vec3 lens2Viewport;
     Vec3 camU;
     Vec3 camV;
@@ -68,13 +68,13 @@ void Camera::refreshCfg() {
     sampleScaleFactor = 1.0 / samplePerPixel;
 
     lens2Viewport = viewportCenter - lensCenter;
-    camW = -lens2Viewport.unitVec();
+    camW = (-lens2Viewport).unitVec();
     camU = cross(vUp, camW).unitVec();
     camV = cross(camW, camU);
 
     focusDist = lens2Viewport.length();
     viewportHeight = std::tan(deg2Rad(vFov / 2)) * focusDist * 2;
-    viewportWidth = aspectRatio * viewportHeight;
+    viewportWidth = viewportHeight * (static_cast<double>(imgWidth) / imgHeight);
     viewportU = viewportWidth * camU;
     viewportV = (-viewportHeight) * camV;
     viewportTopLeft = viewportCenter - 0.5 * (viewportU + viewportV);
@@ -128,8 +128,8 @@ void krt::Camera::render(const ImgType type, std::ostream& os, const Hittable& w
         for (int r {0}; r < imgHeight; r++) {
             std::clog << "\rline " << r << "/" << imgHeight << " elapsed " << getDurationInMs(startTime) << ' ' << std::flush;
             for (int c {0}; c < imgWidth; c++) {
-                Color color{};
-                for (int s {0}; s < samplePerPixel; s++) {
+                Color color{0, 0, 0};
+                for (int s {0}; s < samplePerPixel; ++s) {
                     Ray ray = genRay(r, c);
                     color += rayColor(ray, world, maxDepth);
                 }
@@ -141,12 +141,12 @@ void krt::Camera::render(const ImgType type, std::ostream& os, const Hittable& w
         }
     }
     // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startTime);
-    std::clog << "\rrender completed in " << getDurationInMs(startTime) << "ms\n";
+    std::clog << "\rrender completed in " << getDurationInMs(startTime) << "ms                              \n";
 }
 
 Color Camera::rayColor(const Ray& ray, const Hittable& world, const int depth) const
 {
-    if (depth < 0) return Color{0, 0, 0};
+    if (depth <= 0) return Color{0, 0, 0};
     // avoid shadow acne
     Interval tInterval {1e-3, infinity};
     HitRecord hitRecord;
@@ -178,15 +178,15 @@ Color Camera::rayColor(const Ray& ray, const Hittable& world, const int depth) c
 
 Ray Camera::genRay(const int r, const int c) const {
     Vec3 originOffset = sampleUnitDisk();
-    Point origin = lensCenter + originOffset.x() * defocusU + originOffset.y() * defocusV;
+    Point origin = lensCenter + (originOffset.x() * defocusU) + (originOffset.y() * defocusV);
 
     // Vec3 sampleOffset = sampleUnitSquare();
-    Vec3 sampleOffset = sampleUnitDisk();
-    Point pixelCenter = pixelTopLeft + (c + sampleOffset.x()) * pixelU + (r + sampleOffset.y()) * pixelV;
+    Vec3 sampleOffset = 0.5 * sampleUnitDisk();
+    Point pixelSample = pixelTopLeft + ((c + sampleOffset.x()) * pixelU) + ((r + sampleOffset.y()) * pixelV);
     
     return Ray {
         origin,
-        pixelCenter - origin,
+        pixelSample - origin,
         randomDouble(shutterOpenAt, shutterOpenAt + shutterSpeed),
     };
 }

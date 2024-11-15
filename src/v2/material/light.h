@@ -16,10 +16,6 @@ public:
         tex = t;
     }
 
-    bool scatter(const Ray& ray, HitRecord& record, Ray& outRay, Color& attenuation) const override {
-        return false;
-    }
-
     Color emit(const double& u, const double& v, const Point& point) const override {
         return tex->color(u, v, point);
     }

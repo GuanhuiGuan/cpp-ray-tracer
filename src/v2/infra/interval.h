@@ -12,8 +12,8 @@ public:
     double max;
 
     Interval(double dMin = infinity, double dMax = -infinity) {
-        min = dMin > dMax ? dMax : dMin;
-        max = dMin > dMax ? dMin : dMax;
+        min = dMin;
+        max = dMax;
     }
 
     Interval(const Interval& i1, const Interval& i2) {
@@ -67,7 +67,7 @@ public:
 
 };
 
-const Interval Interval::empty = Interval{0, 0};
+const Interval Interval::empty = Interval{infinity, -infinity};
 
 const Interval Interval::universe = Interval{-infinity, infinity};
 

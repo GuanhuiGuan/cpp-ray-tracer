@@ -12,20 +12,21 @@ public:
     Aabb(const Interval& i, const Interval& j, const Interval& k) {
         e[0] = i;
         e[1] = j;
-        e[2] = j;
+        e[2] = k;
         pad();
     }
 
     Aabb(const Point& p, const Point& q) {
         for (int i = 0; i < 3; i++) {
-            e[i] = Interval {p[i], q[i]};
+            if (p[i] < q[i]) e[i] = Interval {p[i], q[i]};
+            else e[i] = Interval {q[i], p[i]};
         }
         pad();
     }
 
     Aabb(const Aabb& a, const Aabb& b) {
         for (int i = 0; i < 3; i++) {
-            e[i] = Interval (a[i], b[i]);
+            e[i] = Interval {a[i], b[i]};
         }
     }
 
@@ -35,7 +36,7 @@ public:
 
     bool hit(const Ray& ray, Interval tInterval) const {
         for (int i = 0; i < 3; i++) {
-            double invDir {1 / ray.dir[i]};
+            double invDir {1.0 / ray.dir[i]};
             double t0 = (e[i].min - ray.origin[i]) * invDir;
             double t1 = (e[i].max - ray.origin[i]) * invDir;
             if (t0 < t1) {
@@ -45,7 +46,7 @@ public:
                 if (t1 > tInterval.min) tInterval.min = t1;
                 else if (t0 < tInterval.max) tInterval.max = t0;
             }
-            if (!tInterval.valid()) return false;
+            if (tInterval.min >= tInterval.max) return false;
         }
         return true;
     }
@@ -64,7 +65,7 @@ public:
 private:
     Interval e[3];
 
-    void pad(double delta = 1e-3) {
+    void pad(double delta = 1e-4) {
         if (e[0].size() < delta) e[0].expand(delta);
         if (e[1].size() < delta) e[1].expand(delta);
         if (e[2].size() < delta) e[2].expand(delta);

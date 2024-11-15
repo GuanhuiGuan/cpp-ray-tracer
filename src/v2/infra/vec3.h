@@ -54,10 +54,7 @@ public:
     }
 
     Vec3& operator/=(const double v) {
-        e[0] /= v;
-        e[1] /= v;
-        e[2] /= v;
-        return *this;
+        return (*this) *= (1.0/v);
     }
 
     inline double lengthSquared() const {
@@ -81,7 +78,7 @@ public:
 
     static Vec3 genRandomUnitVec() {
         do {
-            Vec3 v = genRandomVec();
+            Vec3 v = genRandomVec(-1, 1); // we want random vec in all directions
             // avoid division with small length
             if (!v.near0()) return v.unitVec();
         } while (true);
@@ -101,22 +98,30 @@ inline Vec3 operator+(const Vec3& v1, const Vec3& v2) {
 }
 
 inline Vec3 operator-(const Vec3& v1, const Vec3& v2) {
-    return Vec3{v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]};
+    return v1 + (-v2);
 }
 
 inline Vec3 operator*(const Vec3& v1, const Vec3& v2) {
     return Vec3{v1[0] * v2[0], v1[1] * v2[1], v1[2] * v2[2]};
 }
 
-inline Vec3 operator*(const double f, const Vec3& v) {
+inline Vec3 operator+(const Vec3& v, double f) {
+    return Vec3{v[0] + f, v[1] + f, v[2] + f};
+}
+
+inline Vec3 operator-(const Vec3& v, double f) {
+    return v + (-f);
+}
+
+inline Vec3 operator*(double f, const Vec3& v) {
     return Vec3{f * v[0], f * v[1], f * v[2]};
 }
 
-inline Vec3 operator*(const Vec3& v, const double f) {
+inline Vec3 operator*(const Vec3& v, double f) {
     return f * v;
 }
 
-inline Vec3 operator/(const Vec3& v, const double f) {
+inline Vec3 operator/(const Vec3& v, double f) {
     return 1.0 / f * v;
 }
 
@@ -153,7 +158,7 @@ inline Vec3 sampleUnitSquare() {
 inline Vec3 sampleUnitDisk() {
     do {
         Vec3 v {randomDouble(-1, 1), randomDouble(-1, 1), 0};
-        if (v.lengthSquared() <= 1) return v;
+        if (v.lengthSquared() < 1) return v;
     } while (true);
 }
 

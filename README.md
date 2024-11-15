@@ -94,6 +94,7 @@ first try the smaller t and see if it's within tInterval (boundaries not include
     - the reflection should follow the Lambertian cosine law; the reflected rays should distribute evenly on a unit sphere tangent to the hit point
     - so we gen (a random unit vector pointing outwards + outward unit normal) as the reflected ray, and multiply a reflectance/attenuation/albedo with the color of the reflection ray
         - beware of vector near 0 for all components; in that case, just set reflection direction to normal
+        - gen random vector with components within (-1, 1) ! (otherwise we'll gen something like failed-cornell-box.ppm)
     - random unit vector: randomly generate points within a unit cube, and continue until a point within the unit sphere is found
         - beware of points with small radius (limit the min radius)
 - Metal (mirrored reflection)

@@ -76,18 +76,6 @@ private:
     static bool cmpOnZ(const std::shared_ptr<Hittable>& p, const std::shared_ptr<Hittable>& q) {
         return cmpOnAxis(2, p, q);
     }
-
-    static auto getComparator(size_t axis) {
-        switch (axis)
-        {
-        case 1:
-            return cmpOnY;
-        case 2:
-            return cmpOnZ;
-        default:
-            return cmpOnX;
-        }
-    }
 };
 
 }

@@ -48,7 +48,7 @@ public:
     }
 
     void add(std::shared_ptr<Hittable> ptr) {
-        list.emplace_back(ptr);
+        list.push_back(ptr);
         bBox = Aabb(bBox, ptr->boundingBox());
     }
 

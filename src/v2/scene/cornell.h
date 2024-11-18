@@ -29,7 +29,7 @@ void sceneCornellBox() {
 
     world.add(std::make_shared<Quad>(Point{343, 554, 332}, Vec3{-130, 0, 0}, Vec3{0, 0, -105}, light));
 
-    world.add(std::make_shared<Sphere>(Point{278, 278, 278}, 90, metal));
+    world.add(box(Point{300, 0, 200}, Point{450, 250, 350}, white));
 
     world = HittableList{std::make_shared<BvhNode>(world)};
 
@@ -37,8 +37,8 @@ void sceneCornellBox() {
     // camera.renderNormal = true;
     camera.imgWidth = 600;
     camera.aspectRatio = 1;
-    // camera.samplePerPixel = 50;
-    camera.samplePerPixel = 200;
+    camera.samplePerPixel = 50;
+    // camera.samplePerPixel = 200;
     // camera.maxDepth = 20;
     camera.maxDepth = 50;
     // camera.background = std::make_shared<TexSolidColor>(Color{0.7, 0.8, 1.0});

@@ -92,6 +92,25 @@ public:
     }
 };
 
+std::shared_ptr<HittableList> box(const Point& p, const Point& q, std::shared_ptr<BaseMat> mat) {
+    std::shared_ptr<HittableList> res {std::make_shared<HittableList>()};
+
+    Point min {std::min(p.x(), q.x()), std::min(p.y(), q.y()), std::min(p.z(), q.z())};
+    Point max {std::max(p.x(), q.x()), std::max(p.y(), q.y()), std::max(p.z(), q.z())};
+    Vec3 dx {max.x() - min.x(), 0, 0};
+    Vec3 dy {0, max.y() - min.y(), 0};
+    Vec3 dz {0, 0, max.z() - min.z()};
+
+    res->add(std::make_shared<Quad>(min, dx, dz, mat)); // bottom (-Y)
+    res->add(std::make_shared<Quad>(min, dz, dy, mat)); // side (-X)
+    res->add(std::make_shared<Quad>(min, dz, dx, mat)); // side (-Z)
+    res->add(std::make_shared<Quad>(max, -dx, -dy, mat)); // side (+Z)
+    res->add(std::make_shared<Quad>(max, -dy, -dz, mat)); // side (+X)
+    res->add(std::make_shared<Quad>(max, -dz, -dx, mat)); // top (+Y)
+
+    return res;
+}
+
 }
 
 #endif

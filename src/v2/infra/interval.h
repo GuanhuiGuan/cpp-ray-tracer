@@ -59,6 +59,10 @@ public:
         return Interval{min + v, max + v};
     }
 
+    inline double operator[](size_t i) const {
+        return i == 0 ? min : max;
+    }
+
     static const Interval empty;
 
     static const Interval universe;

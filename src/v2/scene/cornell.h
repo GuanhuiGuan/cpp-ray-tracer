@@ -30,10 +30,12 @@ void sceneCornellBox() {
     world.add(std::make_shared<Quad>(Point{343, 554, 332}, Vec3{-130, 0, 0}, Vec3{0, 0, -105}, light));
 
     std::shared_ptr<Hittable> box0 {box(Point{0, 0, 0}, Point{165, 330, 165}, white)};
+    box0 = std::make_shared<Rotation>(box0, 15, 1);
     box0 = std::make_shared<Translation>(box0, Vec3{265, 0, 295});
     world.add(box0);
 
     std::shared_ptr<Hittable> box1 {box(Point{0, 0, 0}, Point{165, 165, 165}, white)};
+    box1 = std::make_shared<Rotation>(box1, -18, 1);
     box1 = std::make_shared<Translation>(box1, Vec3{130, 0, 65});
     world.add(box1);
 

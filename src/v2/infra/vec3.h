@@ -172,16 +172,28 @@ inline Vec3 refract(const Vec3& unitIn, const Vec3& unitNormal, const double rel
     return dirPerpToNormal + dirParallelToNormal;
 }
 
-inline Vec3 rotate(const Vec3& v, double angle, size_t axis) {
+inline Vec3 rotate(const Vec3& v, double sine, double cosine, size_t axis) {
     size_t i0 {(axis + 3 - 1) % 3};
     size_t i1 {(axis + 1) % 3};
-    double theta {deg2Rad(angle)};
-    double sine {std::sin(theta)};
-    double cosine {std::cos(theta)};
     Vec3 ret {v};
     ret[i0] = {cosine * ret[i0] + sine * ret[i1]};
     ret[i1] = {-sine * ret[i0] + cosine * ret[i1]};
     return ret;
+}
+
+inline Vec3 rotate(const Vec3& v, double angle, size_t axis) {
+    double theta {deg2Rad(angle)};
+    double sine {std::sin(theta)};
+    double cosine {std::cos(theta)};
+    return rotate(v, sine, cosine, axis);
+}
+
+inline Vec3 minVec(const Vec3& u, const Vec3& v) {
+    return Vec3{std::min(u[0], v[0]), std::min(u[1], v[1]), std::min(u[2], v[2])};
+}
+
+inline Vec3 maxVec(const Vec3& u, const Vec3& v) {
+    return Vec3{std::max(u[0], v[0]), std::max(u[1], v[1]), std::max(u[2], v[2])};
 }
 
 using Point = Vec3;

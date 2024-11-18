@@ -38,8 +38,10 @@ public:
         if (hitDist > distInBoundary) return false;
 
         record.t = rec0.t + hitDist / rayLen;
-        record.normal = Vec3{0, 1, 0};
-        record.frontFacing = true;
+        record.hitPoint = ray.at(record.t);
+
+        record.normal = Vec3{0, 1, 0}; // arbitary
+        record.frontFacing = true; // arbitary
         record.material = phaseFunc;
         return true;
     }

@@ -1,13 +1,14 @@
 #include "scene/balls.h"
 #include "scene/tex.h"
 #include "scene/cornell.h"
+#include "scene/final.h"
 
 #include <string>
 #include <iostream>
 
 int main() {
 
-    std::string sceneName{"cornell"};
+    std::string sceneName{"final"};
     // std::clog << "Please input the scene name: ";
     // std::cin >> sceneName;
 
@@ -17,6 +18,8 @@ int main() {
         krt::sceneTexBalls();
     } else if ("cornell" == sceneName) {
         krt::sceneCornellBox();
+    } else if ("final" == sceneName) {
+        krt::sceneFinal();
     } else {
         std::clog << "\nError: Scene not found\n";
     }

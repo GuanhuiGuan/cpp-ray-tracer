@@ -176,8 +176,8 @@ inline Vec3 rotate(const Vec3& v, double sine, double cosine, size_t axis) {
     size_t i0 {(axis + 3 - 1) % 3};
     size_t i1 {(axis + 1) % 3};
     Vec3 ret {v};
-    ret[i0] = {cosine * ret[i0] + sine * ret[i1]};
-    ret[i1] = {-sine * ret[i0] + cosine * ret[i1]};
+    ret[i0] = {cosine * v[i0] + sine * v[i1]};
+    ret[i1] = {-sine * v[i0] + cosine * v[i1]};
     return ret;
 }
 

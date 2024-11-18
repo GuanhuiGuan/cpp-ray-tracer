@@ -3,7 +3,8 @@
 
 #include "lambertian.h"
 #include "metal.h"
-#include "lambertian.h"
+#include "dielectric.h"
 #include "light.h"
+#include "isotropic.h"
 
 #endif

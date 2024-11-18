@@ -172,6 +172,18 @@ inline Vec3 refract(const Vec3& unitIn, const Vec3& unitNormal, const double rel
     return dirPerpToNormal + dirParallelToNormal;
 }
 
+inline Vec3 rotate(const Vec3& v, double angle, size_t axis) {
+    size_t i0 {(axis + 3 - 1) % 3};
+    size_t i1 {(axis + 1) % 3};
+    double theta {deg2Rad(angle)};
+    double sine {std::sin(theta)};
+    double cosine {std::cos(theta)};
+    Vec3 ret {v};
+    ret[i0] = {cosine * ret[i0] + sine * ret[i1]};
+    ret[i1] = {-sine * ret[i0] + cosine * ret[i1]};
+    return ret;
+}
+
 using Point = Vec3;
 
 using Color = Vec3;

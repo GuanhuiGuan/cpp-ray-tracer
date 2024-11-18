@@ -103,7 +103,7 @@ std::shared_ptr<HittableList> box(const Point& p, const Point& q, std::shared_pt
 
     res->add(std::make_shared<Quad>(min, dx, dz, mat)); // bottom (-Y)
     res->add(std::make_shared<Quad>(min, dz, dy, mat)); // side (-X)
-    res->add(std::make_shared<Quad>(min, dz, dx, mat)); // side (-Z)
+    res->add(std::make_shared<Quad>(min, dy, dx, mat)); // side (-Z)
     res->add(std::make_shared<Quad>(max, -dx, -dy, mat)); // side (+Z)
     res->add(std::make_shared<Quad>(max, -dy, -dz, mat)); // side (+X)
     res->add(std::make_shared<Quad>(max, -dz, -dx, mat)); // top (+Y)

@@ -75,6 +75,14 @@ private:
 const Aabb Aabb::empty = Aabb{Interval::empty, Interval::empty, Interval::empty};
 const Aabb Aabb::universe = Aabb{Interval::universe, Interval::universe, Interval::universe};
 
+Aabb operator+(const Aabb& a, const Vec3& v) {
+    return Aabb {a[0] + v[0], a[1] + v[1], a[2] + v[2]};
+}
+
+Aabb operator+(const Vec3& v, const Aabb& a) {
+    return a + v;
+}
+
 }
 
 #endif

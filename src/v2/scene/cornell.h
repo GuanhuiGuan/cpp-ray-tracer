@@ -29,7 +29,13 @@ void sceneCornellBox() {
 
     world.add(std::make_shared<Quad>(Point{343, 554, 332}, Vec3{-130, 0, 0}, Vec3{0, 0, -105}, light));
 
-    world.add(box(Point{300, 0, 200}, Point{450, 250, 350}, white));
+    std::shared_ptr<Hittable> box0 {box(Point{0, 0, 0}, Point{165, 330, 165}, white)};
+    box0 = std::make_shared<Translation>(box0, Vec3{265, 0, 295});
+    world.add(box0);
+
+    std::shared_ptr<Hittable> box1 {box(Point{0, 0, 0}, Point{165, 165, 165}, white)};
+    box1 = std::make_shared<Translation>(box1, Vec3{130, 0, 65});
+    world.add(box1);
 
     world = HittableList{std::make_shared<BvhNode>(world)};
 
@@ -37,8 +43,8 @@ void sceneCornellBox() {
     // camera.renderNormal = true;
     camera.imgWidth = 600;
     camera.aspectRatio = 1;
-    camera.samplePerPixel = 50;
-    // camera.samplePerPixel = 200;
+    // camera.samplePerPixel = 50;
+    camera.samplePerPixel = 200;
     // camera.maxDepth = 20;
     camera.maxDepth = 50;
     // camera.background = std::make_shared<TexSolidColor>(Color{0.7, 0.8, 1.0});

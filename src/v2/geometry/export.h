@@ -4,5 +4,6 @@
 #include "bvh.h"
 #include "sphere.h"
 #include "primitive.h"
+#include "instance.h"
 
 #endif

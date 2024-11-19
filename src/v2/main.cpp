@@ -9,7 +9,7 @@
 
 int main() {
 
-    std::string sceneName{"volume"};
+    std::string sceneName{"final"};
     // std::clog << "Please input the scene name: ";
     // std::cin >> sceneName;
 

@@ -17,6 +17,10 @@ set (SOURCE_V2
     "src/v2/main.cpp"
 )
 
+set (SOURCE_V2
+    "src/v3/main.cpp"
+)
+
 include_directories(src)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -44,4 +48,5 @@ endif()
 # endif()
 
 # add_executable(rt_v1 ${SOURCE_V1})
-add_executable(rt_v2 ${SOURCE_V2})
+# add_executable(rt_v2 ${SOURCE_V2})
+add_executable(rt_v3 ${SOURCE_V2})

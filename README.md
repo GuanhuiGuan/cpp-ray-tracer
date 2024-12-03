@@ -16,6 +16,17 @@ personal experiment project
     - to resolve equation with cross products on both sides, dot product another vector on both sides
     - a X b = -b X a
 - radians & degrees: rad = deg * pi / 180 (arc length of unit circle)
+- integral(sin(x) * cos(x) dx): substitution!
+    - replace cos(x) with d(sin(x)) / dx => integral(sin(x) * d(sin(x)))
+    - let u = sin(x) => integral(u * du)
+    - => 0.5 * u^2 + C => 0.5 * sin(x)^2 + C
+- integral(cos(x)^3 dx)
+    - integral((1 - sin(x)^2) * cos(x) * dx)
+    - let u = sin(x), du = cos(x) * dx
+    - integral((1 - u^2) * du)
+- integral(cos(x)^3 * sin(x) dx)
+    - similar to method above, let u = sin(x)
+    - integral((u - u^3) * du)
 ### V1
 #### Render Output
 - defines the aspect ratio
@@ -247,6 +258,124 @@ for simplicity, assume that the ray won't re-enter the volume once left (?)
         - set normal = (1,0,0) and frontFacing = true (arbitary, ?)
 - [material] isotropic
     - always scatter, but the direction is random
+
+### V3
+#### Monte Carlo
+- 2 randomized algo: Monte Carlo (statistical correct) vs Las Vegas (always correct with unguaranteed time)
+- Buffon's needle problem: D <= 0.5 * sin(theta), D: center of needle to nearest line
+- jittering (stratified samples): subdivide and sample
+- integration <=> area <=> approximated by Monte Carlo sampling
+- PDF: probability density function, likelihood over a range
+    - only meaningful for likelihood of an interval; for any given value x, pdf(x) is always 0 (b/c the bin is of 0-width)
+    - how to sample following given PDF: [naive] recursively find 50% division; [_Metropolis-Hastings Algo_](https://blog.djnavarro.net/posts/2023-04-12_metropolis-hastings/)
+- CDF: cummulative density function, likelihood of sample in range [-inf, x]
+    - ICD (inverse CDF): f(P(x)) = x -> f(d) = P^-1(x) = ICD(x)
+- importance sampling
+    - Goal: get the integral of f(x) over [a, b]
+    - choose a PDF p(x) positive over [a, b] (converge faster the closer p(x) approximates f(x))
+    - approximate the integral with the average of f(r) / p(r)
+        - r is sample with PDF p, generated with ICD of p(x) with input as a uniform random num
+        - the division of p(r) serves as a weight to correct the sampling bias
+- unit sphere
+    - a range of directions <=> a solid angle
+    - f(theta, phi) = cos(theta)^2 = cos(z)^2
+#### Scattering PDF
+- Color(x, wo, lambda) = integralOverWi(A(x, wo, wi, lambda) * pScatter(x, wo, wi, lambda) * Color(x, wi, lambda))
+- x: point on surface, wi: incident direction, wo: outgoing direction, lambda: wavelength
+- BRDF: bidirectional reflectance distribution function
+- approx with MC: Color(p, wo, lambda) = ∑(A(x, wo, wi, lambda) * pScatter(x, wo, wi, lambda) * Color(x, wi, lambda) / p(x, wo, wi, lambda))
+- Lambertian pScatter: max(0, cos(thetaO) / pi), thetaO: angle between wo and normal
+#### PDF of a sphere
+- p(omega) * dOmega = p(theta, phi) * dTheta * dPhi, omega: solid angle, theta in [0, pi], phi in [0, 2*pi]
+- dOmega = sin(theta) * dTheta * dPhi => p(theta, phi) = p(omega) * sin(theta)
+- get derivative of theta:
+    - p(theta) = integral[0, 2pi](p(omega) * sin(theta) * dPhi)
+- if p(omega) is only related to theta, let f(theta) = p(omega)
+    - p(theta) = integral[0, 2pi](f(theta) * sin(theta) * dPhi) = 2pi * sin(theta) * f(theta) 
+    - p(phi) = p(theta, phi) / p(theta) = 1 / 2pi (suppose p(theta, phi) = p(phi) * p(theta) i.e. phi and theta are independent?)
+#### Generate Random Directions
+- rejection method (loop until valid), inversion method (inverse CDF)
+- based on the definition of f(theta), calculate CDF of theta and phi, and then plugin 2 random numbers to generate theta and phi
+#### Orthonormal Bases
+- class Onb: take in a normal vector n, find an axis not parallel to n (try x or y), then gen other two vectors with cross products
+- [transform] transform Vec3 p to this Onb: p.x * u + p.y * v + p.z * w
+- class material
+    - add a new param &pdf to scatter(): collects pdf from materials along the path
+    - for dielectric, pdf = 1 / (4pi)
+#### Sample Light Directly
+- could resolve with shadow ray (?)
+- sample light (only)
+    - p(omega) = dist(p, q)^2 / (cos(theta) * A)
+    - p: point on surface, q: point on light, theta: angle from y-axis, A: area of light
+- unidirectional light
+    - material#emit takes in one more param HitRecord, and only emit if it's front facing
+#### Impl with PDF
+- refactored rayColor()
+    1. the func now accepts world and lights as 2 params
+    1. return black if depth <= 0
+    1. run hit() and record at hitRecord; return background if no hit
+    1. gen emittedColor
+    1. run scatter() and record at scatterRecord; return emittedColor if no scatter
+    1. if scatterRecord.skipPdf, return scatterRecord.attenuation * rayColor(scatterRecord.skipPdfRay)
+        - why not combined with emittedColor?
+    1. gen lightPdf with lights and hitPoint as a HittablePdf
+    1. gen mixPdf with lightPdf and scatterRecord.pdf
+    1. gen scatteredRay with mixPdf
+    1. gen subColor with rayColor(scatteredRay)
+    1. gen scatteredColor = scatterRecord.attenuation * scatterPdf * subColor / pdfValue
+        - scatterPdf: material specific PDF value of ray being scattered at direction of scatteredRay
+            - run hitRecord.mat.scatterPdf(scatteredRay)
+        - pdfValue: PDF value of mixPdf at direction of scatteredRay
+            - run mixPdf.value(scatteredRay)
+    1. return emittedColor + scatteredColor
+- new ScatterRecord
+    - bool skipPdf
+    - Ray skipPdfRay
+    - ptr pdf
+    - Color attenuation
+- new Pdf
+    - double value(Vec3): return PDF value
+    - Vec3 generate(): generate vec that follows this PDF
+    - derivatives
+        - SpherePdf: 1/4pi, randomUnitVec
+        - CosPdf
+            - init with Onb
+            - max(0, cos(theta)/pi)
+            - with ICD:
+                - uniform rand gen r1, r2
+                - phi = 2pi * r1
+                - x = cos(phi) * sqrt(r2)
+                - y = sin(phi) * sqrt(r2)
+                - z = sqrt(1-r2)
+        - HittablePdf
+            - init with a hittable, and an origin
+            - hittable.pdfValue(), hittable.random()
+        - MixPdf
+            - lerp 2 PDFs
+- refactored Hittable
+    - new double pdfValue(Vec3, time?) : default 0
+        - sphere: 1 / solidAngle, solidAngle is part of area on a unit sphere
+            - solidAngle = integral[0,2pi](integral[0,thetaMax](sin(theta))) = 2pi * (1 - cos(thetaMax))
+            - cos(thetaMax) = sqrt(1 - radius^2 / lenSquared(C - P)), C=sphere center, P=hitPoint
+    - new Vec3 random() : default {1,0,0}
+        - sphere
+            - generate 2 uniform random nums r1, r2
+            - z = cos(theta) = 1 + r2 * (cos(thetaMax) - 1)
+            - x = cos(phi) * sin(theta) = cos(2pi * r1) * sqrt(1 - z^2)
+            - y = sin(phi) * sin(theta) = sin(2pi * r1) * sqrt(1 - z^2)
+            - use (C-P) to generate an Onb, and transform with Onb
+- refactored Material
+    - scatter()
+        - encapsulate outRay and attenuation in new param scatterRecord
+    - new double scatterPdf()
+        - return PDF value at direction of scatteredRay
+        - default: 0.0
+        - Lambertian: 0 if cos(theta) < 0, cos(theta) / pi otherwise
+        - Isotropic: 1 / 4pi (uniform sphere)
+- fix surface acne
+    - usually caused by NaN at final RGB
+    - detect NaN with NaN != NaN, and replace NaN with 0
+
 ## Miscellaneous
 - install brew (mainland China): ```/bin/zsh -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)"```
 

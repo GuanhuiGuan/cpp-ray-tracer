@@ -78,7 +78,7 @@ public:
     Vec3 random(const Point& p, double time) const override {
         if (size() == 0) return Vec3{1, 0, 0};
         // randomly choose one
-        return list[randomInt(0, size())]->random(p, time);
+        return list[randomInt(0, size() - 1)]->random(p, time);
     }
 };
 

@@ -10,8 +10,8 @@
 int main() {
 
     std::string sceneName{"cornell"};
-    std::clog << "Please input the scene name: ";
-    std::cin >> sceneName;
+    // std::clog << "Please input the scene name: ";
+    // std::cin >> sceneName;
 
     if ("balls" == sceneName) {
         krt::sceneBalls();

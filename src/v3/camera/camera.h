@@ -156,8 +156,8 @@ Color Camera::rayColor(const Ray& ray, const int depth, const Hittable& world, c
         return emittedColor + sRec.attenuation * rayColor(sRec.skipPdfRay, depth - 1, world, lights);
     }
 
-    HittablePdf lightPdf {lights, hRec.hitPoint};
-    MixPdf mixPdf {0.5, std::make_shared<HittablePdf>(lightPdf), sRec.pdf};
+    std::shared_ptr<Pdf> lightPdf = std::make_shared<HittablePdf>(lights, hRec.hitPoint);
+    MixPdf mixPdf {0.5, lightPdf, sRec.pdf};
 
     Ray scatteredRay {hRec.hitPoint, mixPdf.generate(ray.time), ray.time};
     Color subColor {rayColor(scatteredRay, depth - 1, world, lights)};

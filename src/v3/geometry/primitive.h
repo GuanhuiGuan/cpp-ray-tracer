@@ -64,6 +64,22 @@ public:
     virtual bool isInterior(double alpha, double beta, HitRecord& record) const {
         return true;
     }
+
+    double pdfVal(const Point& origin, const Vec3& dir, double time) const override {
+        HitRecord hRec;
+        if (!hit(Ray{origin, dir, time}, Interval{1e-4, infinity}, hRec)) {
+            return 0;
+        }
+        
+        double cosine {std::abs(dot(dir, hRec.normal) / dir.length())};
+        double distanceSquared {hRec.t * hRec.t * dir.lengthSquared()};
+        return distanceSquared / (cosine * n.length());
+    }
+
+    Vec3 random(const Point& p, double time) const override {
+        Point r {Q + randomDouble() * u + randomDouble() * v};
+        return r - p;
+    }
 };
 
 class Quad : public Primitive2D {

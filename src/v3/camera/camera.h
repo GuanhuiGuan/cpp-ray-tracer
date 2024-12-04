@@ -144,7 +144,7 @@ Color Camera::rayColor(const Ray& ray, const int depth, const Hittable& world, c
     if (renderNormal) return normalize(hRec.normal);
 
     // emitted light
-    Color emittedColor = hRec.material->emit(hRec.u, hRec.v, hRec.hitPoint);
+    Color emittedColor = hRec.material->emit(ray, hRec, hRec.u, hRec.v, hRec.hitPoint);
 
     ScatterRecord sRec;
     if (!hRec.material->scatter(ray, hRec, sRec)) {

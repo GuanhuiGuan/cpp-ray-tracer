@@ -15,7 +15,8 @@ public:
         tex = t;
     }
 
-    Color emit(const double& u, const double& v, const Point& point) const override {
+    Color emit(const Ray& ray, HitRecord& hRec, const double& u, const double& v, const Point& point) const override {
+        if (!hRec.frontFacing) return Color{}; // unidirectional light
         return tex->color(u, v, point) * amplifier;
     }
 };

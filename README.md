@@ -357,6 +357,11 @@ for simplicity, assume that the ray won't re-enter the volume once left (?)
         - sphere: 1 / solidAngle, solidAngle is part of area on a unit sphere
             - solidAngle = integral[0,2pi](integral[0,thetaMax](sin(theta))) = 2pi * (1 - cos(thetaMax))
             - cos(thetaMax) = sqrt(1 - radius^2 / lenSquared(C - P)), C=sphere center, P=hitPoint
+        - primitive
+            - check hit
+            - cosine = abs(dot(dir, hitRecord.normal)) / dir.len
+            - distanceSquared = t*t*dir.lenSquared
+            - return distanceSquared / (cosine * primitive.n.len)
     - new Vec3 random() : default {1,0,0}
         - sphere
             - generate 2 uniform random nums r1, r2
@@ -364,6 +369,9 @@ for simplicity, assume that the ray won't re-enter the volume once left (?)
             - x = cos(phi) * sin(theta) = cos(2pi * r1) * sqrt(1 - z^2)
             - y = sin(phi) * sin(theta) = sin(2pi * r1) * sqrt(1 - z^2)
             - use (C-P) to generate an Onb, and transform with Onb
+        - primitive
+            - generate point R with Q + rand*u + rand*v
+            - return R - P, P is the param
 - refactored Material
     - scatter()
         - encapsulate outRay and attenuation in new param scatterRecord

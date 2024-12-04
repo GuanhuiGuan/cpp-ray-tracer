@@ -37,14 +37,7 @@ public:
     }
 
     Vec3 generate(double time) const override {
-        double r1 {randomDouble()};
-        double r2 {randomDouble()};
-        double phi {2 * pi * r1};
-        return Vec3 {
-            std::cos(phi) * std::sqrt(r2),
-            std::sin(phi) * std::sqrt(r2),
-            std::sqrt(1 - r2),
-        };
+        return onb.transform(randomCosineDir());
     }
 };
 

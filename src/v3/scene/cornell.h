@@ -47,10 +47,10 @@ void sceneCornellBox() {
 
     Camera camera{};
     // camera.renderNormal = true;
-    camera.imgWidth = 400;
+    camera.imgWidth = 600;
     camera.aspectRatio = 1;
-    camera.samplePerPixel = 50;
-    // camera.samplePerPixel = 200;
+    // camera.samplePerPixel = 50;
+    camera.samplePerPixel = 200;
     // camera.maxDepth = 20;
     camera.maxDepth = 50;
     // camera.background = std::make_shared<TexSolidColor>(Color{0.7, 0.8, 1.0});

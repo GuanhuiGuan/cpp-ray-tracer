@@ -202,6 +202,17 @@ inline Vec3 maxVec(const Vec3& u, const Vec3& v) {
     return Vec3{std::max(u[0], v[0]), std::max(u[1], v[1]), std::max(u[2], v[2])};
 }
 
+inline Vec3 randomCosineDir() {
+    double r1 {randomDouble()};
+    double r2 {randomDouble()};
+    double phi {2 * pi * r1};
+    return Vec3 {
+        std::cos(phi) * std::sqrt(r2),
+        std::sin(phi) * std::sqrt(r2),
+        std::sqrt(1 - r2),
+    };
+}
+
 using Point = Vec3;
 
 using Color = Vec3;

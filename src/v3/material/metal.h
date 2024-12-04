@@ -18,12 +18,13 @@ public:
     bool scatter(const Ray& ray, HitRecord& hRec, ScatterRecord& sRec) const override {
         sRec.attenuation = tex->color(hRec.u, hRec.v, hRec.hitPoint);
         sRec.skipPdf = true;
+        sRec.pdf = nullptr;
         sRec.skipPdfRay = {
             hRec.hitPoint,
             reflect(ray.dir, hRec.normal).unitVec() + fuzzy * Vec3::genRandomUnitVec(),
             ray.time,
         };
-        return dot(sRec.skipPdfRay.dir, hRec.normal) > 0;
+        return true;
     }
 };
 

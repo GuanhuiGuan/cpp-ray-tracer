@@ -1,6 +1,7 @@
 #include "scene/balls.h"
 #include "scene/tex.h"
 #include "scene/cornell.h"
+#include "scene/cornell-exotic.h"
 #include "scene/volume.h"
 #include "scene/final.h"
 
@@ -9,9 +10,9 @@
 
 int main() {
 
-    std::string sceneName{"cornell"};
-    // std::clog << "Please input the scene name: ";
-    // std::cin >> sceneName;
+    std::string sceneName{"cornell-exo"};
+    std::clog << "Please input the scene name: ";
+    std::cin >> sceneName;
 
     if ("balls" == sceneName) {
         krt::sceneBalls();
@@ -19,6 +20,8 @@ int main() {
         krt::sceneTexBalls();
     } else if ("cornell" == sceneName) {
         krt::sceneCornellBox();
+    } else if ("cornell-exo" == sceneName) {
+        krt::sceneCornellBoxExotic();
     } else if ("volume" == sceneName) {
         krt::sceneVolume();
     } else if ("final" == sceneName) {

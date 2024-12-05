@@ -77,7 +77,7 @@ void sceneCornellBoxExotic() {
     // camera.background = std::make_shared<TexSolidColor>(Color{0.7, 0.8, 1.0});
 
     camera.lensCenter = Point{278, 278, -800};
-    camera.viewportCenter = Point{278, 278, 190};
+    camera.viewportCenter = Point{278, 278, 300};
     camera.vFov = 40;
     camera.apertureAngle = 1;
     camera.shutterOpenAt = shutterOpenAt;

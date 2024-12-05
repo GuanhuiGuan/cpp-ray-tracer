@@ -1,13 +1,14 @@
 cmake_minimum_required ( VERSION 3.1.0...3.27.0 )
 project(KwansRayTracer VERSION 0.1.0 LANGUAGES C CXX)
 
-# Set to C++17
 set ( CMAKE_CXX_STANDARD          20 )
 set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 set ( CMAKE_CXX_EXTENSIONS        OFF )
 
 set(CMAKE_C_COMPILER "/usr/bin/gcc")
 set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+# compiler optimization
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 set (SOURCE_V1
     "src/v1/main.cpp"
@@ -17,7 +18,7 @@ set (SOURCE_V2
     "src/v2/main.cpp"
 )
 
-set (SOURCE_V2
+set (SOURCE_V3
     "src/v3/main.cpp"
 )
 
@@ -49,4 +50,4 @@ endif()
 
 # add_executable(rt_v1 ${SOURCE_V1})
 # add_executable(rt_v2 ${SOURCE_V2})
-add_executable(rt_v3 ${SOURCE_V2})
+add_executable(rt_v3 ${SOURCE_V3})

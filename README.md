@@ -2,6 +2,9 @@
 
 personal experiment project
 
+## Demo Rendering
+<img src="rendering/cornell-glass-1k.png" title="Cornell Box - Alternate" width="300" height="300">
+
 ## Notes
 ### Graphics
 - visualize normal: 

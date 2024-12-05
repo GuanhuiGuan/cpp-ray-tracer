@@ -29,15 +29,15 @@ void sceneCornellBoxExotic() {
 
     HittableList world{};
     world.add(std::make_shared<Quad>(Point{0, 0, 0}, Vec3{0, 0, 555}, Vec3{555, 0, 0}, white)); // bottom
-    world.add(std::make_shared<Quad>(Point{0, 0, 0}, Vec3{0, 555, 0}, Vec3{0, 0, 555}, red)); // cam's right
-    world.add(std::make_shared<Quad>(Point{555, 0, 0}, Vec3{0, 0, 555}, Vec3{0, 555, 0}, lambClassicBlue)); // cam's left
+    world.add(std::make_shared<Quad>(Point{0, 0, 0}, Vec3{0, 555, 0}, Vec3{0, 0, 555}, lambClassicBlue)); // cam's right
+    world.add(std::make_shared<Quad>(Point{555, 0, 0}, Vec3{0, 0, 555}, Vec3{0, 555, 0}, lambLivingCoral)); // cam's left
     world.add(std::make_shared<Quad>(Point{0, 0, 555}, Vec3{0, 555, 0}, Vec3{555, 0, 0}, white)); // back
     world.add(std::make_shared<Quad>(Point{0, 555, 0}, Vec3{555, 0, 0}, Vec3{0, 0, 555}, white)); // top
 
     std::shared_ptr<Hittable> box0 {box(Point{0, 0, 0}, Point{165, 250, 165}, metal)};
     box0 = std::make_shared<Rotation>(box0, 15, 1);
     box0 = std::make_shared<Translation>(box0, Vec3{265, 0, 295});
-    box0 = std::make_shared<ConstMedium>(box0, 0.01, lambLivingCoral);
+    box0 = std::make_shared<ConstMedium>(box0, 0.01, red);
     world.add(box0);
 
     // std::shared_ptr<Hittable> box1 {box(Point{0, 0, 0}, Point{165, 200, 165}, metal)};
